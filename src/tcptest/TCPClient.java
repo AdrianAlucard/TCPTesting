@@ -39,9 +39,10 @@ public class TCPClient extends Thread {
       
      
       DataInputStream is = new DataInputStream(clientSocket.getInputStream());
-      byte[] bRecv = new byte[5069134];
+ 
+      byte[] bRecv = new byte[562536351];
      // BufferedInputStream is = new BufferedInputStream(in);
-      File f = new File("C:\\Users\\Owner\\Music\\Test\\test.mp4");
+      File f = new File("C:\\Users\\Owner\\Music\\Test\\test3.mp4");
       if(!f.exists())
           f.createNewFile();
       outFile = new FileOutputStream(f);
@@ -56,14 +57,14 @@ public class TCPClient extends Thread {
       int available = -1;
       while((available = is.read(bRecv))>0){
          buffOut.write(bRecv, 0, available);
-         
-          buffOut.flush();
+         buffOut.flush();
       }
 */
       buffOut.write(bRecv);
+      
       is.close();
       buffOut.flush();
-      buffOut.close();
+      //buffOut.close();
       
       System.out.println("Closing Connection");
       clientSocket.close();
