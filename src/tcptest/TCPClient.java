@@ -6,7 +6,7 @@ import java.net.*;
  * Simple client connects sends a sentence periodically and outputs the
  * response. This is an adaption of the code provided by the Computer
  * Networking: A Top Down Approach book by Kurose and Ross
- *
+ * 
  * @author Chad Williams
  */
 public class TCPClient extends Thread {
@@ -25,14 +25,16 @@ public class TCPClient extends Thread {
   public void run() {
     Socket clientSocket = null;
     try {
-      String sentence;
-      String modifiedSentence;
+      //String sentence;
+      //String modifiedSentence;
       BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
       System.out.println("CLIENT opening socket");
-      clientSocket = new Socket("localhost", serverPort);
+      //INSERT IP HERE
+      clientSocket = new Socket("192.168.1.64", serverPort);
       System.out.println("CLIENT connected to server");
-      DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+      //DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
       BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      /*
       for (int i = 0; i < 4; i++) {
         sentence = "Mixed case sentence " + i;
         System.out.println(this.getName() + ": sending '" + sentence + "'");
@@ -42,6 +44,7 @@ public class TCPClient extends Thread {
         System.out.println(this.getName() + " received from server: " + modifiedSentence);
         Thread.sleep(1500);
       }
+      */
       clientSocket.close();
       System.out.println(this.getName() + " closed connection to server");
     } catch (Exception e) {

@@ -2,12 +2,15 @@ package tcptest;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
 
 /**
  * Simple TCP server thread that starts up and waits for TCP connections and
  * echos what is sent capitalized. This is an adaption of the code provided by
  * the Computer Networking: A Top Down Approach book by Kurose and Ross
- *
+ * 
+ * This class wile be used to SEND files as a stream of bytes in a bufferedoutputstream
+ * 
  * @author Chad Williams
  */
 public class TCPServer extends Thread {
@@ -24,25 +27,44 @@ public class TCPServer extends Thread {
    */
   public void run() {
     ServerSocket serverSocket = null;
+    File outFile = null;
+    FileInputStream fis = null;
+    BufferedInputStream buffRead = null;
+    OutputStream out = null;
+     byte[] bSend;    
     try {
-      String clientSentence;
-      String capitalizedSentence;
       serverSocket = new ServerSocket(this.port);
+     
       while (true) {
         System.out.println("SERVER accepting connections");
         Socket clientConnectionSocket = serverSocket.accept();
         System.out.println("SERVER accepted connection (single threaded so others wait)");
+        
+        
+        
+        outFile = new File("C:\\Users\\Surface Book\\Desktop\\Music\\Test.m4a");
+        bSend = new byte[(int) outFile.length()];
+        //Should read all bytes from file into bSend
+        //bSend = Files.readAllBytes(outFile.toPath());
+        
+        
+        fis = new FileInputStream(outFile);
+        buffRead = new BufferedInputStream(fis);
+        buffRead.read(bSend, 0, bSend.length);
+        
+        
+        
         // This is regarding the server state of the connection
         while (clientConnectionSocket.isConnected() && !clientConnectionSocket.isClosed()) {
-          BufferedReader inFromClient = new BufferedReader(new InputStreamReader(clientConnectionSocket.getInputStream()));
-          DataOutputStream outToClient = new DataOutputStream(clientConnectionSocket.getOutputStream());
-          clientSentence = inFromClient.readLine();
-          // Note if this returns null it means the client closed the connection
-          if (clientSentence != null) {
-            System.out.println("SERVER Received: " + clientSentence);
-            capitalizedSentence = clientSentence.toUpperCase() + '\n';
-            System.out.println("SERVER responding: " + capitalizedSentence);
-            outToClient.writeBytes(capitalizedSentence);
+           out =  clientConnectionSocket.getOutputStream();
+            // Note if this returns null it means the client closed the connection
+          if (out!= null) {
+            System.out.println("SERVER sending file...");
+            System.out.println("Size is" + bSend.length);
+            out.write(bSend, 0, bSend.length);
+            out.flush();
+            System.out.println("Done");
+            
           } else {
             clientConnectionSocket.close();
             System.out.println("SERVER client connection closed");
