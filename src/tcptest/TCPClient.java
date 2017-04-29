@@ -12,7 +12,10 @@ import java.net.*;
 public class TCPClient extends Thread {
 
   private int serverPort;
-
+  int bytesRead;
+  int current = 0;
+  FileOutputStream outFile = null;
+  BufferedOutputStream buffOut = null;
   public TCPClient(String name, int serverPort) {
     super(name);
     this.serverPort = serverPort;
@@ -25,26 +28,35 @@ public class TCPClient extends Thread {
   public void run() {
     Socket clientSocket = null;
     try {
-      //String sentence;
-      //String modifiedSentence;
-      BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+      
+      
       System.out.println("CLIENT opening socket");
       //INSERT IP HERE
-      clientSocket = new Socket("192.168.1.64", serverPort);
+      clientSocket = new Socket("192.168.1.96", serverPort);
       System.out.println("CLIENT connected to server");
+      
+      //get file
+      byte[] bRecv = new byte[96000];
+      InputStream is = clientSocket.getInputStream();
+      File f = new File("C:\\Users\\Owner\\Music\\Test\\test.m4a");
+      if(!f.exists())
+          f.createNewFile();
+      outFile = new FileOutputStream(f);
+      buffOut = new BufferedOutputStream(outFile);
+      bytesRead = is.read(bRecv, 0, bRecv.length);
+      current = bytesRead;
+      
+      do{
+        bytesRead = is.read(bRecv, current, bRecv.length-current);
+        if(bytesRead>=0)
+            current+=bytesRead;
+      }while(bytesRead > -1);
+      
       //DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-      BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-      /*
-      for (int i = 0; i < 4; i++) {
-        sentence = "Mixed case sentence " + i;
-        System.out.println(this.getName() + ": sending '" + sentence + "'");
-        outToServer.writeBytes(sentence + '\n');
-        modifiedSentence = inFromServer.readLine();
-
-        System.out.println(this.getName() + " received from server: " + modifiedSentence);
-        Thread.sleep(1500);
-      }
-      */
+     
+      buffOut.write(bRecv, 0, current);
+      buffOut.flush();
+      
       clientSocket.close();
       System.out.println(this.getName() + " closed connection to server");
     } catch (Exception e) {
