@@ -30,8 +30,11 @@ public class TCPServer extends Thread {
     File outFile = null;
     FileInputStream fis = null;
     BufferedInputStream buffRead = null;
-    OutputStream out = null;
-     byte[] bSend;    
+    DataOutputStream out = null;
+    //BufferedOutputStream out = null;
+    
+   
+    byte[] bSend;    
     try {
       serverSocket = new ServerSocket(this.port);
      
@@ -42,8 +45,11 @@ public class TCPServer extends Thread {
         
         
         
-        outFile = new File("C:\\Users\\Surface Book\\Desktop\\Music\\Test.m4a");
+        outFile = new File("C:\\Users\\Surface Book\\Desktop\\Music\\Fat Jon - Your Purpose.mp4");
+        
         bSend = new byte[(int) outFile.length()];
+        System.out.println("Array is "+ bSend.length);
+        
         //Should read all bytes from file into bSend
         //bSend = Files.readAllBytes(outFile.toPath());
         
@@ -51,21 +57,25 @@ public class TCPServer extends Thread {
         fis = new FileInputStream(outFile);
         buffRead = new BufferedInputStream(fis);
         buffRead.read(bSend, 0, bSend.length);
-        
+        buffRead.close();
+        fis.close();
         
         
         // This is regarding the server state of the connection
         while (clientConnectionSocket.isConnected() && !clientConnectionSocket.isClosed()) {
-           out =  clientConnectionSocket.getOutputStream();
+           out =new DataOutputStream( clientConnectionSocket.getOutputStream());
             // Note if this returns null it means the client closed the connection
           if (out!= null) {
             System.out.println("SERVER sending file...");
             System.out.println("Size is" + bSend.length);
             out.write(bSend, 0, bSend.length);
             out.flush();
+            out.close();
+            clientConnectionSocket.close();
             System.out.println("Done");
             
           } else {
+            out.close();
             clientConnectionSocket.close();
             System.out.println("SERVER client connection closed");
           }
