@@ -45,7 +45,7 @@ public class TCPServer extends Thread {
         
         
         
-        outFile = new File("C:\\Users\\Surface Book\\Desktop\\Music\\Fat Jon - Your Purpose.mp4");
+        outFile = new File("C:\\Users\\Surface Book\\Desktop\\Music\\Nujabes - Modal Soul (Full Album).mp4");
         
         bSend = new byte[(int) outFile.length()];
         System.out.println("Array is "+ bSend.length);
